@@ -1,0 +1,72 @@
+name: Fabriquer les versions Mac
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fabriquer:
+    name: Mac ${{ matrix.edition }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 35
+    defaults:
+      run:
+        working-directory: GitHub_Mac_AeroDesign
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - edition: Intel
+            runner: macos-15-intel
+            python_arch: x64
+            machine: x86_64
+          - edition: AppleSilicon
+            runner: macos-15
+            python_arch: arm64
+            machine: arm64
+    env:
+      OMP_NUM_THREADS: '2'
+      OPENBLAS_NUM_THREADS: '2'
+      VECLIB_MAXIMUM_THREADS: '2'
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - name: Recuperer les fichiers du projet
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Preparer Python pour cette architecture
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          architecture: ${{ matrix.python_arch }}
+      - name: Installer les dependances de fabrication
+        run: |
+          python -m pip install --only-binary=:all: -r mac_build/requirements.txt
+      - name: Verifier le modele et les calculs sources
+        run: python mac_build/verify_app.py --source --expected-arch ${{ matrix.machine }}
+      - name: Fabriquer application Mac autonome
+        run: python mac_build/build_macos.py --expected-arch ${{ matrix.machine }}
+      - name: Verifier application sans Python accessible
+        run: python mac_build/verify_app.py --frozen --expected-arch ${{ matrix.machine }}
+      - name: Emballer application et rapport
+        run: python mac_build/package_macos.py --edition ${{ matrix.edition }}
+      - name: Mettre le fichier Mac a disposition
+        uses: actions/upload-artifact@v4
+        with:
+          name: AeroDesign_AI_Mac_${{ matrix.edition }}
+          path: GitHub_Mac_AeroDesign/mac_build/livraison/*
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
+      - name: Conserver les diagnostics en cas de probleme
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Diagnostic_Mac_${{ matrix.edition }}
+          path: |
+            GitHub_Mac_AeroDesign/mac_build/verification*.json
+            GitHub_Mac_AeroDesign/mac_build/build/**/*.txt
+          if-no-files-found: ignore
+          retention-days: 7
