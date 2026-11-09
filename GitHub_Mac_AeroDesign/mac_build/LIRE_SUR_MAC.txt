@@ -1,0 +1,25 @@
+AeroDesign AI — édition Mac de test
+
+Choisir Intel pour un Mac Intel, AppleSilicon pour un Mac M1/M2/M3/M4/etc.
+Le type de puce figure dans le menu Apple > À propos de ce Mac.
+
+Décompresser AeroDesign_AI_Mac_....zip sur le Mac. Déplacer AeroDesign AI.app
+dans Applications, puis l'ouvrir. Aucun Python, XFOIL, Ansys ou environnement
+scientifique à installer. L'application utilise le navigateur habituel et
+fonctionne hors ligne. La petite fenêtre de lancement permet de rouvrir le
+navigateur ou de quitter proprement l'application.
+
+Cette édition est construite et contrôlée automatiquement sur macOS 15.
+Les autres versions de macOS ne sont pas encore qualifiées. Un essai utilisateur
+sur un vrai Mac reste nécessaire, notamment pour l'ouverture dans Safari.
+Le champ d'écoulement est indicatif et ne remplace pas une simulation visqueuse.
+
+L'application n'est pas notariée avec un compte Apple Developer. macOS peut
+donc bloquer son ouverture. En cas de blocage, relever le message exact et le
+transmettre avec la version de macOS et le type de puce. Ne pas désactiver
+globalement les protections de macOS. Il n'y a aucun mot de passe à communiquer.
+
+Tests demandés : ouvrir l'application depuis le Finder ; essayer NACA 0012
+puis 2412 ; changer l'incidence et les curseurs ; vérifier la visualisation ;
+tester les trois objectifs dans Optimiser ; fermer et rouvrir l'application.
+Les détails des contrôles automatiques sont dans VERIFICATION.json.
