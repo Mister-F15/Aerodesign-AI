@@ -1,0 +1,57 @@
+/* Recherche ML seule. Les champs utilisateur ne déclenchent aucun XFOIL. */
+(()=>{'use strict';
+const el=id=>document.getElementById(id),fmt=(v,d=2)=>new Intl.NumberFormat('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(v);
+const tabs=[el('tab-explorer'),el('tab-optimizer')],panels=[el('explorer-view'),el('optimizer-view')];
+function activate(index,focus=false){tabs.forEach((tab,i)=>{tab.setAttribute('aria-selected',String(i===index));tab.tabIndex=i===index?0:-1;panels[i].hidden=i!==index;});globalThis.AeroFlow?.setVisible(index===0);if(focus)tabs[index].focus();}
+tabs.forEach((tab,i)=>{tab.addEventListener('click',()=>activate(i));tab.addEventListener('keydown',event=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){event.preventDefault();activate(event.key==='Home'?0:event.key==='End'?1:1-i,true);}});});
+const descriptions={max_finesse:'Chercher le plus de portance par rapport à la traînée, aux conditions choisies.',min_CD:'Chercher la plus faible traînée avec CL au moins égal au minimum choisi. La portance n’est pas imposée à une valeur exacte.',max_CL:'Chercher la plus forte portance. CD et la finesse restent affichés pour comparer les compromis.'};
+const labels={max_finesse:['FINESSE MAXIMALE','Gain estimé de finesse'],min_CD:['TRAÎNÉE MINIMALE','Baisse estimée de CD'],max_CL:['PORTANCE MAXIMALE','Gain estimé de CL']};
+let controller=null,epoch=0;
+function reset(){epoch++;controller?.abort();el('opt-results').hidden=true;el('opt-error').hidden=true;el('opt-search').disabled=false;el('opt-status').textContent='Paramètres modifiés : relancez la recherche pour actualiser les propositions.';el('opt-alpha-value').textContent=fmt(Number(el('opt-alpha').value),Number(el('opt-alpha').value)%1?1:0)+'°';el('opt-thickness-value').textContent=el('opt-thickness').value+' %';el('opt-objective-help').textContent=descriptions[el('opt-objective').value];}
+el('optimization-form').addEventListener('input',reset);
+function node(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;}
+function outline(row){const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 320 88');svg.classList.add('opt-outline');svg.setAttribute('aria-label','Contour du NACA '+row.code);svg.setAttribute('role','img');const upper=[],lower=[];
+ for(let i=0;i<=70;i++){const x=(1-Math.cos(Math.PI*i/70))/2,m=row.m,p=row.p,t=row.t,yt=5*t*(.2969*Math.sqrt(x)-.126*x-.3516*x*x+.2843*x**3-.1015*x**4);let yc=0,slope=0;if(m>0){if(x<p){yc=m/(p*p)*(2*p*x-x*x);slope=2*m/(p*p)*(p-x);}else{yc=m/((1-p)**2)*((1-2*p)+2*p*x-x*x);slope=2*m/((1-p)**2)*(p-x);}}const angle=Math.atan(slope);upper.push([x-yt*Math.sin(angle),yc+yt*Math.cos(angle)]);lower.push([x+yt*Math.sin(angle),yc-yt*Math.cos(angle)]);}
+ const path=document.createElementNS(svg.namespaceURI,'path'),xy=([x,y])=>`${(12+296*x).toFixed(2)},${(53-245*y).toFixed(2)}`;path.setAttribute('d','M'+upper.concat(lower.reverse()).map(xy).join(' L')+' Z');path.setAttribute('fill','#e3f0e8');path.setAttribute('stroke','#287968');path.setAttribute('stroke-width','1.7');svg.append(path);return svg;}
+function metrics(prediction,metric){const wrap=node('div','opt-card-metrics');for(const [key,label,decimals] of [['CL','CL · portance',4],['CD','CD · traînée',5],['finesse','CL/CD · finesse',2]]){const box=node('div',key===metric?'opt-chosen':'');box.append(node('span','',label),node('strong','',fmt(prediction[key],decimals)));wrap.append(box);}return wrap;}
+function openProfile(row,data){globalThis.AeroExplorer.open(row.code,data.conditions);activate(0);window.scrollTo({top:0,behavior:'smooth'});}
+function referenceCard(data){const target=el('opt-reference-result');target.replaceChildren();target.hidden=!data.reference;if(!data.reference)return;const ref=data.reference;target.append(node('p','opt-reference-label','VOTRE POINT DE COMPARAISON'));const heading=node('div','opt-profile-heading');heading.append(node('h3','','NACA '+ref.code));target.append(heading);
+ if(ref.available){target.append(metrics(ref.prediction,data.metric));if(!ref.constraints_met)target.append(node('p','opt-reference-warning','La référence ne respecte pas les contraintes choisies. Elle reste affichée comme point de comparaison.'));}
+ else target.append(node('p','opt-reference-warning',ref.reasons.join(' ')+' Aucun gain relatif ne sera affiché.'));
+}
+function render(data){el('opt-results').hidden=false;el('opt-error').hidden=true;el('opt-summary-label').textContent=labels[data.objective][0];el('opt-results-title').textContent=data.candidates.length?`Les ${data.candidates.length} meilleurs profils`:'Aucun profil admissible';el('opt-counts').textContent=`${data.feasible_count} profils admissibles sur ${data.total_geometries} géométries · ${fmt(data.conditions.alpha_deg,data.conditions.alpha_deg%1?1:0)}° · Re = ${fmt(data.conditions.Re,0)}`;referenceCard(data);const target=el('opt-candidates');target.replaceChildren();
+ if(!data.candidates.length)target.append(node('p','opt-empty',data.empty_reason));
+ for(const row of data.candidates){const card=node('article','card opt-candidate');card.dataset.code=row.code;const left=node('div');const heading=node('div','opt-profile-heading');heading.append(node('span','opt-rank',String(row.rank)),node('h3','','NACA '+row.code));left.append(heading,outline(row),node('p','opt-shape-facts',`Cambrure ${fmt(row.m*100,0)} % · position ${row.m?fmt(row.p*100,0)+' %':'sans objet'} · épaisseur ${fmt(row.t*100,0)} %`));const right=node('div');right.append(metrics(row,data.metric));let comparison;
+ if(!data.reference)comparison='Recherche sans profil de référence.';
+ else if(!data.reference.available)comparison='Comparaison à la référence indisponible.';
+ else if(row.improvement_pct===null)comparison='Écart relatif non affiché : la valeur de référence est nulle, négative ou trop proche de zéro.';
+ else comparison=`${labels[data.objective][1]} : ${row.improvement_pct>=0?'+':''}${fmt(row.improvement_pct,2)} % par rapport au NACA ${data.reference.code}.`;
+ const change=node('p','opt-comparison',comparison);change.dataset.negative=String(row.improvement_pct!==null&&row.improvement_pct<0);const button=node('button','opt-view','Voir dans Explorer ↗');button.type='button';button.addEventListener('click',()=>openProfile(row,data));right.append(change,button);card.append(left,right);target.append(card);}
+ el('opt-boundary-note').hidden=!data.candidates.some(row=>row.boundary);el('opt-status').textContent='Recherche terminée. Propositions estimées par le ML, sans calcul XFOIL.';
+}
+el('optimization-form').addEventListener('submit',async event=>{event.preventDefault();const id=++epoch;controller?.abort();controller=new AbortController();el('opt-search').disabled=true;el('opt-error').hidden=true;el('opt-results').hidden=true;el('opt-status').textContent='Recherche des profils admissibles avec le modèle…';const query=new URLSearchParams({objective:el('opt-objective').value,alpha:el('opt-alpha').value,re:el('opt-re').value,cl_min:el('opt-cl-min').value,thickness_min:el('opt-thickness').value,reference:el('opt-reference').value});
+ try{const response=await fetch('/api/optimize?'+query,{signal:controller.signal});const data=await response.json();if(id!==epoch)return;if(!response.ok)throw new Error(data.error||'La recherche n’a pas abouti.');render(data);}catch(error){if(error.name==='AbortError'||id!==epoch)return;el('opt-error').hidden=false;el('opt-error').textContent=error instanceof TypeError?'Connexion interrompue. Relancez l’application, puis réessayez.':error.message;el('opt-status').textContent='Recherche non terminée.';}finally{if(id===epoch)el('opt-search').disabled=false;}
+});
+})();
+
+/* Interactions de présentation uniquement : aucune modification des prédictions. */
+(() => {
+  'use strict';
+  const buttons = [...document.querySelectorAll('[data-view]')];
+  const panels = {flow: document.getElementById('studio-flow-view'), geometry: document.getElementById('studio-geometry-view')};
+  if (!panels.flow || !panels.geometry) return;
+  function selectView(view) {
+    if (!(view in panels)) return;
+    for (const [name, panel] of Object.entries(panels)) panel.hidden = name !== view;
+    for (const button of buttons) button.setAttribute('aria-pressed', String(button.dataset.view === view));
+    globalThis.AeroFlow?.setVisible(view === 'flow' && !document.getElementById('explorer-view').hidden);
+  }
+  for (const button of buttons) button.addEventListener('click', () => selectView(button.dataset.view));
+  document.getElementById('reset-case')?.addEventListener('click', () => {
+    globalThis.AeroExplorer?.open('0012', {alpha_deg: 0, Re: 1000000});
+  });
+  document.getElementById('tab-explorer')?.addEventListener('click', () => {
+    if (panels.flow.hidden) globalThis.AeroFlow?.setVisible(false);
+  });
+  selectView('flow');
+})();

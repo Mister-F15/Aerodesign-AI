@@ -1,0 +1,17 @@
+{
+  "identifiant": "extension_moderee_20261108_v1",
+  "model_file": "modeles/extension_moderee_20261108_v1/modele_CL_CD.joblib",
+  "model_sha256": "89ef9034b50ecd600340c08ce1841d2fcd847c0fc32ac2884efd680b044758dd",
+  "domain_file": "modeles/extension_moderee_20261108_v1/domaine.json",
+  "entrees": [
+    "m",
+    "p",
+    "t",
+    "alpha_deg",
+    "Re"
+  ],
+  "sorties": [
+    "CL",
+    "CD"
+  ]
+}

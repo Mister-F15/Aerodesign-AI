@@ -1,0 +1,9 @@
+[
+  {
+    "profile_id": "NACA6715",
+    "Re": 1000000,
+    "alpha_deg": 0.0,
+    "reason": "Écart CL de 0,0051 entre solutions fines, supérieur au seuil de 0,005.",
+    "source": "rapports/verification_objectifs_20261109/CONCLUSIONS.json"
+  }
+]

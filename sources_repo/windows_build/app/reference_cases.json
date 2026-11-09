@@ -1,0 +1,251 @@
+[
+  {
+    "naca": "0012",
+    "alpha": 0,
+    "Re": 1000000,
+    "available": true,
+    "prediction": {
+      "CL": 0.0009165875922902966,
+      "CD": 0.005384357173665088,
+      "finesse": 0.17023157319007926
+    }
+  },
+  {
+    "naca": "0012",
+    "alpha": 4,
+    "Re": 2000000,
+    "available": true,
+    "prediction": {
+      "CL": 0.43679896896630577,
+      "CD": 0.0064535044316791435,
+      "finesse": 67.68399612807806
+    }
+  },
+  {
+    "naca": "0012",
+    "alpha": 8,
+    "Re": 3000000,
+    "available": true,
+    "prediction": {
+      "CL": 0.8898848919188356,
+      "CD": 0.009258455198242945,
+      "finesse": 96.11591489773764
+    }
+  },
+  {
+    "naca": "2413",
+    "alpha": 0,
+    "Re": 1000000,
+    "available": true,
+    "prediction": {
+      "CL": 0.23667662551793317,
+      "CD": 0.005986227756480521,
+      "finesse": 39.53685612140529
+    }
+  },
+  {
+    "naca": "2413",
+    "alpha": 4,
+    "Re": 2000000,
+    "available": true,
+    "prediction": {
+      "CL": 0.6826275509215114,
+      "CD": 0.006085996224793986,
+      "finesse": 112.16365007597727
+    }
+  },
+  {
+    "naca": "2413",
+    "alpha": 8,
+    "Re": 3000000,
+    "available": true,
+    "prediction": {
+      "CL": 1.118273670371385,
+      "CD": 0.009926762939068289,
+      "finesse": 112.65240010620667
+    }
+  },
+  {
+    "naca": "3512",
+    "alpha": 0,
+    "Re": 1000000,
+    "available": true,
+    "prediction": {
+      "CL": 0.39233041095799853,
+      "CD": 0.005959587565366796,
+      "finesse": 65.8318057507813
+    }
+  },
+  {
+    "naca": "3512",
+    "alpha": 4,
+    "Re": 2000000,
+    "available": true,
+    "prediction": {
+      "CL": 0.833338688265128,
+      "CD": 0.006287978563913771,
+      "finesse": 132.52886914207932
+    }
+  },
+  {
+    "naca": "3512",
+    "alpha": 8,
+    "Re": 3000000,
+    "available": true,
+    "prediction": {
+      "CL": 1.2312408989683377,
+      "CD": 0.010880173586768443,
+      "finesse": 113.16371831288335
+    }
+  },
+  {
+    "naca": "0029",
+    "alpha": 0,
+    "Re": 1000000,
+    "available": true,
+    "prediction": {
+      "CL": 0.002222832800992336,
+      "CD": 0.01038672857036949,
+      "finesse": 0.21400701731375488
+    }
+  },
+  {
+    "naca": "0029",
+    "alpha": 4,
+    "Re": 2000000,
+    "available": true,
+    "prediction": {
+      "CL": 0.36553013713275656,
+      "CD": 0.009209819468509944,
+      "finesse": 39.689175057401606
+    }
+  },
+  {
+    "naca": "0029",
+    "alpha": 8,
+    "Re": 3000000,
+    "available": true,
+    "prediction": {
+      "CL": 0.7514999840262834,
+      "CD": 0.011256062764454204,
+      "finesse": 66.76401862287616
+    }
+  },
+  {
+    "naca": "6424",
+    "alpha": 0,
+    "Re": 1000000,
+    "available": true,
+    "prediction": {
+      "CL": 0.578779979351899,
+      "CD": 0.011009993156933774,
+      "finesse": 52.56860482128457
+    }
+  },
+  {
+    "naca": "6424",
+    "alpha": 4,
+    "Re": 2000000,
+    "available": true,
+    "prediction": {
+      "CL": 1.0237752669129758,
+      "CD": 0.0104246873835651,
+      "finesse": 98.20680747961755
+    }
+  },
+  {
+    "naca": "6424",
+    "alpha": 8,
+    "Re": 3000000,
+    "available": true,
+    "prediction": {
+      "CL": 1.4260930207769922,
+      "CD": 0.012195199606462226,
+      "finesse": 116.93888306849087
+    }
+  },
+  {
+    "naca": "8412",
+    "alpha": 0,
+    "Re": 1000000,
+    "available": false,
+    "prediction": null
+  },
+  {
+    "naca": "8412",
+    "alpha": 4,
+    "Re": 2000000,
+    "available": false,
+    "prediction": null
+  },
+  {
+    "naca": "8412",
+    "alpha": 8,
+    "Re": 3000000,
+    "available": false,
+    "prediction": null
+  },
+  {
+    "naca": "9912",
+    "alpha": 0,
+    "Re": 1000000,
+    "available": false,
+    "prediction": null
+  },
+  {
+    "naca": "9912",
+    "alpha": 4,
+    "Re": 2000000,
+    "available": false,
+    "prediction": null
+  },
+  {
+    "naca": "9912",
+    "alpha": 8,
+    "Re": 3000000,
+    "available": false,
+    "prediction": null
+  },
+  {
+    "naca": "2404",
+    "alpha": 0,
+    "Re": 1000000,
+    "available": false,
+    "prediction": null
+  },
+  {
+    "naca": "2404",
+    "alpha": 4,
+    "Re": 2000000,
+    "available": false,
+    "prediction": null
+  },
+  {
+    "naca": "2404",
+    "alpha": 8,
+    "Re": 3000000,
+    "available": false,
+    "prediction": null
+  },
+  {
+    "naca": "0031",
+    "alpha": 0,
+    "Re": 1000000,
+    "available": false,
+    "prediction": null
+  },
+  {
+    "naca": "0031",
+    "alpha": 4,
+    "Re": 2000000,
+    "available": false,
+    "prediction": null
+  },
+  {
+    "naca": "0031",
+    "alpha": 8,
+    "Re": 3000000,
+    "available": false,
+    "prediction": null
+  }
+]
